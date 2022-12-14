@@ -1,0 +1,43 @@
+// перевірка тіла запиту на наявність поля submit, що вказує на відправку форми додавання нового робітника
+if (isset($_POST['submit'])) {
+
+    // валідація поля імені
+    if (empty($_POST['worker_first_name'])) {
+        // якщо поле порожнє - відмічаємо це у масиві помилок
+        $creationErrors['worker_first_name'] = true;
+    } else {
+        // якщо поле не порожнє - додаємо його значення у массив нового робітника
+        $newWorker['worker_first_name'] = $_POST['worker_first_name']; //escape sql
+    }
+
+    // валідація поля призвища
+    if (empty($_POST['worker_last_name'])) {
+        $creationErrors['worker_last_name'] = true;
+    } else {
+        $newWorker['worker_last_name'] = $_POST['worker_last_name']; //escape sql
+    }
+
+    // валідація поля електронної пошти
+    if (empty($_POST['worker_email'])) {
+        $creationErrors['worker_email'] = true;
+    } else {
+        $newWorker['worker_email'] = $_POST['worker_email']; //escape sql
+    }
+
+    // валідація поля телефону
+    if (empty($_POST['worker_phone'])) {
+        $creationErrors['worker_phone'] = true;
+    } else {
+        $newWorker['worker_phone'] = $_POST['worker_phone']; //escape sql
+    }
+
+    if (empty($creationErrors)) {
+        // створення запиту до бази даних
+        $values = "'" . join("', '", array_values($newWorker)) . "'";
+        $sql = "INSERT INTO workers (first_name, last_name, email, phone) VALUES ($values)";
+        // виконання запиту до бази даних
+        mysqli_query($db, $sql);
+        // перенаправлення на головну сторінку
+        header('location: index.php');
+    }
+}
